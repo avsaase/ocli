@@ -172,6 +172,7 @@ pub fn init(level: log::Level) -> Result<(), SetLoggerError> {
 
 /// Colorize a string with the color associated with the log level
 fn paint(level: log::Level, msg: &str) -> std::string::String {
+    #[cfg(not(feature = "no_color"))]
     let style = if std::io::stderr().is_terminal() {
         match level {
             log::Level::Error => anstyle::AnsiColor::Red.on_default(),
@@ -183,5 +184,8 @@ fn paint(level: log::Level, msg: &str) -> std::string::String {
     } else {
         anstyle::Style::new()
     };
+    #[cfg(feature = "no_color")]
+    let style = anstyle::Style::new();
+
     format!("{}{}{}", style.render(), msg, style.render_reset())
 }
